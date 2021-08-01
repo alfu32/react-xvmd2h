@@ -3,24 +3,28 @@ import { Button } from 'primereact/button';
 
 export const Counter = props => {
   const [counter, setCounter] = useState(0);
+  const buttonCssStyle = "p-button-rounded p-button-raised p-button-outlined p-button-secondary";
+  const btnCssStyle = 'p-button-text';
   return (
-    <div>
-      <span>{props.name}</span>
-      <span>{counter}</span>
-      <Button
+    <tr>
+      <td>{props.name}</td>
+      <td>{counter}</td>
+      <td><Button
+        className={btnCssStyle}
         onClick={() => {
           setCounter(counter - 1);
         }}
       >
         -
-      </Button>
-      <Button
+      </Button></td>
+      <td><Button
+        className={btnCssStyle}
         onClick={() => {
           setCounter(counter + 1);
         }}
       >
         +
-      </Button>
-    </div>
+      </Button></td>
+    </tr>
   );
 };
