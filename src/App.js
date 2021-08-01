@@ -4,7 +4,7 @@ import {Counter} from './Counter';
 import {TodoList} from './TodoList';
 import {Kanban} from './Kanban';
 
-export default function App() {
+export const App = () => {
   const kanbanTransitions=[
     {from:"open",to:"todo"},
     {from:"todo",to:"progress"},
@@ -14,9 +14,10 @@ export default function App() {
   ];
   return (
     <div>
-      <Counter name='coucou'/>
+      {/*<Counter name='coucou'/>
       <Counter name='coucou2'/>
-      <TodoList/>
+      <TodoList/>*/}
+      <Kanban workflow={kanbanTransitions} />
     </div>
   );
 }

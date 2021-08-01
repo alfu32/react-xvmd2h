@@ -1,0 +1,8 @@
+.lanes {
+  display: table-row;
+  padding:5px;
+}
+.lane {
+  display: table-cell;
+  padding:5px;
+}

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import './Kanban.css';
 
 export const Kanban = (props) => {
   const [boardId,setBoardId] = useState(0);
-  const states = props.states.reduce((s,i)=>{
+  const states = props.workflow.reduce((s,i)=>{
     s[i.from]=true;
     s[i.to]=true;
     return s;
