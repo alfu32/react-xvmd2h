@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {SplitButton} from 'primereact/splitbutton';
+import { ContextMenu } from 'primereact/contextmenu';
 import { Button } from 'primereact/button';
 import './Kanban.css';
 
@@ -58,7 +59,7 @@ export const Kanban = props => {
                       <div className="task">
                         <h5>
                           #{task.id} {task.title}
-                          <SplitButton label={model[0].label} model={model} />
+                          <ContextMenu label={model[0].label} model={model} />
                         </h5>
                         <div>{task.description}</div>
                       </div>
