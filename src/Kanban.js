@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import {SplitButton} from 'primereact/splitbutton';
 import { ContextMenu } from 'primereact/contextmenu';
 import { Button } from 'primereact/button';
@@ -55,15 +55,15 @@ export const Kanban = props => {
                         transitionTask(task,to);
                       }
                     }))
-                    return (
+                    return (<>
                       <div className="task">
                         <h5>
                           #{task.id} {task.title}
-                          <ContextMenu label={model[0].label} model={model} />
                         </h5>
                         <div>{task.description}</div>
                       </div>
-                    );
+                          <SplitButton label={model[0].label} model={model} />
+                    </>);
                   })}
               </div>
             </div>
