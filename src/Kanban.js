@@ -18,7 +18,7 @@ const stlBtnAdd = 'p-button-rounded p-button-text p-button-sm';
 export const Kanban = props => {
   const [taskList, setTaskList] = useState([]);
   const states = props.workflow.reduce((s, i) => {
-    s[i.from] = (s[i.from]||[]).concat([s.to]);
+    s[i.from] = (s[i.from]||[]).concat([i.to]);
     return s;
   }, {});
   const transitionTask = (item,toState) => {
@@ -58,7 +58,7 @@ export const Kanban = props => {
                       <div className="task">
                         <h5>
                           #{task.id} {task.title}
-                          <SplitButton label="Secondary" className="p-button-secondary" model={model} />
+                          <SplitButton label={model[0].label} model={model} />
                         </h5>
                         <div>{task.description}</div>
                       </div>
