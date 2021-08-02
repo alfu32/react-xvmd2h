@@ -17,10 +17,23 @@ const stlBtnAdd = 'p-button-rounded p-button-text p-button-sm';
 export const Kanban = props => {
   const [taskList, setTaskList] = useState([]);
   const states = props.workflow.reduce((s, i) => {
-    s[i.from] = true;
-    s[i.to] = true;
+    s[i.from] = [...(s[i.from]||[]),s.to];
     return s;
   }, {});
+  const transitionButtons = Object.keys(states)
+  .reduce(
+    (s,from) => {
+      s[from]=states[from].map(
+        to => (item) => ({
+          label:to,
+          command:(e) => {
+            item.state = to;
+            setTaskList([...taskList]);
+          },
+        })
+      );
+      return s;
+    },{});
   const createTask = state => {
     setTaskList([...taskList, createItem(state)]);
   };
