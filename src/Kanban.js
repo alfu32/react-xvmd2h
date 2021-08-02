@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import {SplitButton} from 'primereact/splitbutton';
 import { Button } from 'primereact/button';
 import './Kanban.css';
 
@@ -17,23 +18,13 @@ const stlBtnAdd = 'p-button-rounded p-button-text p-button-sm';
 export const Kanban = props => {
   const [taskList, setTaskList] = useState([]);
   const states = props.workflow.reduce((s, i) => {
-    s[i.from] = [...(s[i.from]||[]),s.to];
+    s[i.from] = (s[i.from]||[]).concat([s.to]);
     return s;
   }, {});
-  const transitionButtons = Object.keys(states)
-  .reduce(
-    (s,from) => {
-      s[from]=states[from].map(
-        to => (item) => ({
-          label:to,
-          command:(e) => {
-            item.state = to;
-            setTaskList([...taskList]);
-          },
-        })
-      );
-      return s;
-    },{});
+  const transitionTask = (item,toState) => {
+    item.state = toState;
+    setTaskList([...taskList]);
+  };
   const createTask = state => {
     setTaskList([...taskList, createItem(state)]);
   };
@@ -45,6 +36,7 @@ export const Kanban = props => {
           return (
             <div className="lane">
               <h4>{state}</h4>
+              <pre>{JSON.stringify(states[state])}</pre>
               <Button
                 icon="pi pi-plus"
                 className={stlBtnAdd}
@@ -56,10 +48,17 @@ export const Kanban = props => {
                 {taskList
                   .filter(task => task.state === state)
                   .map(task => {
+                    const model = states[state].map(to => ({
+                      label:to,
+                      command:(e) => {
+                        transitionTask(task,to);
+                      }
+                    }))
                     return (
                       <div className="task">
                         <h5>
                           #{task.id} {task.title}
+                          <SplitButton label="Secondary" className="p-button-secondary" model={model} />
                         </h5>
                         <div>{task.description}</div>
                       </div>
