@@ -54,7 +54,9 @@ export const Kanban = props => {
                       command:(e) => {
                         transitionTask(task,to);
                       }
-                    }))
+                    }));
+                    const first = model[0];
+                    const rest = model.slice(1);
                     return (<>
                       <div className="task">
                         <h5>
@@ -62,7 +64,7 @@ export const Kanban = props => {
                         </h5>
                         <div>{task.description}</div>
                       </div>
-                          <SplitButton label={model[0].label} model={model} />
+                          <SplitButton label={first.label} onClick={first.command} model={rest} />
                     </>);
                   })}
               </div>
