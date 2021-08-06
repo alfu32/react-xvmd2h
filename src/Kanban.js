@@ -19,16 +19,13 @@ const stlBtnAdd = 'p-button-rounded p-button-text p-button-sm';
 
 export const Kanban = props => {
   const [taskList, setTaskList] = useState([]);
-  const states = props.workflow.reduce(
-    (s, i) => {
-      s.fwd[i.from] = (s.fwd[i.from] || []).concat([i.to]);
-      s.rev[i.to] = (s.rev[i.to] || []).concat([i.from]);
-      s.map[i.to] = (s.map[i.to] || 0) + 1;
-      s.map[i.from] = (s.map[i.from] || 0) + 1;
-      return s;
-    },
-    { fwd: {}, rev: {}, map: {} }
-  );
+  const states = props.workflow.reduce((s, i) => {
+    s[i.from] = s[i.from] || { next: [], prev: [] };
+    s[i.to] = s[i.to] || { next: [], prev: [] };
+    s[i.to].prev = s[i.to].prev.concat(i.from);
+    s[i.from].next = s[i.from].next.concat(i.to);
+    return s;
+  }, {});
   const transitionTask = (item, toState) => {
     item.state = toState;
     setTaskList([...taskList]);
@@ -40,7 +37,7 @@ export const Kanban = props => {
     <>
       <h4>{props.title} Board</h4>
       <div className="lanes">
-        {Object.keys(states.map).map(state => {
+        {Object.keys(states).map(state => {
           return (
             <div className="lane">
               <h4>{state}</h4>
@@ -55,10 +52,10 @@ export const Kanban = props => {
                 {taskList
                   .filter(task => task.state === state)
                   .map(task => {
-                    if (states.fwd[state] === undefined) {
+                    if (states[state].next.length === 0) {
                       return <KanbanCard task={task} />;
                     }
-                    const model = states.fwd[state].map(to => ({
+                    const model = states[state].next.map(to => ({
                       label: to,
                       command: e => {
                         transitionTask(task, to);
