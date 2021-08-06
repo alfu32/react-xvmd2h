@@ -1,7 +1,8 @@
-import React, { useState, useEffect,useRef } from 'react';
-import {SplitButton} from 'primereact/splitbutton';
+import React, { useState, useEffect, useRef } from 'react';
+import { SplitButton } from 'primereact/splitbutton';
 import { ContextMenu } from 'primereact/contextmenu';
 import { Button } from 'primereact/button';
+import { KanbanCard } from './KanbanCard';
 import './Kanban.css';
 
 let sequence = 0;
@@ -18,11 +19,17 @@ const stlBtnAdd = 'p-button-rounded p-button-text p-button-sm';
 
 export const Kanban = props => {
   const [taskList, setTaskList] = useState([]);
-  const states = props.workflow.reduce((s, i) => {
-    s[i.from] = (s[i.from]||[]).concat([i.to]);
-    return s;
-  }, {});
-  const transitionTask = (item,toState) => {
+  const states = props.workflow.reduce(
+    (s, i) => {
+      s.fwd[i.from] = (s.fwd[i.from] || []).concat([i.to]);
+      s.rev[i.to] = (s.rev[i.to] || []).concat([i.from]);
+      s.map[i.to] = (s.map[i.to] || 0) + 1;
+      s.map[i.from] = (s.map[i.from] || 0) + 1;
+      return s;
+    },
+    { fwd: {}, rev: {}, map: {} }
+  );
+  const transitionTask = (item, toState) => {
     item.state = toState;
     setTaskList([...taskList]);
   };
@@ -33,11 +40,10 @@ export const Kanban = props => {
     <>
       <h4>{props.title} Board</h4>
       <div className="lanes">
-        {Object.keys(states).map(state => {
+        {Object.keys(states.map).map(state => {
           return (
             <div className="lane">
               <h4>{state}</h4>
-              <pre>{JSON.stringify(states[state])}</pre>
               <Button
                 icon="pi pi-plus"
                 className={stlBtnAdd}
@@ -49,29 +55,33 @@ export const Kanban = props => {
                 {taskList
                   .filter(task => task.state === state)
                   .map(task => {
-                    const model = states[state].map(to => ({
-                      label:to,
-                      command:(e) => {
-                        transitionTask(task,to);
+                    if (states.fwd[state] === undefined) {
+                      return <KanbanCard task={task} />;
+                    }
+                    const model = states.fwd[state].map(to => ({
+                      label: to,
+                      command: e => {
+                        transitionTask(task, to);
                       }
                     }));
                     const first = model[0];
                     const rest = model.slice(1);
-                    return (<>
-                      <div className="task">
-                        <h5>
-                          #{task.id} {task.title}
-                        </h5>
-                        <div>{task.description}</div>
-                      </div>
-                          <SplitButton label={first.label} onClick={first.command} model={rest} />
-                    </>);
+                    return (
+                      <KanbanCard task={task}>
+                        <SplitButton
+                          label={first.label}
+                          onClick={first.command}
+                          model={rest}
+                        />
+                      </KanbanCard>
+                    );
                   })}
               </div>
             </div>
           );
         })}
       </div>
+      <pre>{JSON.stringify(states, null, ' ')}</pre>
     </>
   );
 };

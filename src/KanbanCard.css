@@ -1,0 +1,7 @@
+.kanban-card {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin: 5px;
+  padding: 5px;
+  box-shadow: 0px 1px 6px #333;
+}
